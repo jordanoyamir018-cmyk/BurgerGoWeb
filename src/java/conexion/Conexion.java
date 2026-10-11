@@ -10,10 +10,10 @@ import java.sql.SQLException;
 
 public class Conexion {
     public static Connection conectar() throws SQLException, ClassNotFoundException {
-        // Parámetros de conexión para PostgreSQL local
-        String url = "jdbc:postgresql://localhost:5432/BD_BurgerGo";
-        String user = "postgres"; // Usuario por defecto de PostgreSQL
-        String pass = "admin"; // Tu contraseña de PostgreSQL (cámbiala si usaste otra)
+        // Parámetros de conexión para Neon.tech (PostgreSQL en la nube)
+        String url = "jdbc:postgresql://ep-wild-glitter-b45ewofz-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require";
+        String user = "neondb_owner"; 
+        String pass = "npg_WyJ39smMnafP"; // Pega aquí tu contraseña de Neon
         
         Class.forName("org.postgresql.Driver");
         return DriverManager.getConnection(url, user, pass);
