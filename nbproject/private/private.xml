@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/conexion/Conexion.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/index.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Producto.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/ProductoDAO.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/admin.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Pedido.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/PedidoDAO.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/cocina.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/delivery.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/reportes.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/DetallePedido.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/controlador/CarritoServlet.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Insumo.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/InsumoDAO.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/inventario.jsp</file>
+        </group>
+    </open-files>
+</project-private>
