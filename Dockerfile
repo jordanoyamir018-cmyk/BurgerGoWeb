@@ -1,6 +1,16 @@
-FROM tomcat:9.0-jdk11-openjdk-slim
+FROM eclipse-temurin:11-jdk-jammy
 
-COPY dist/BurgerGoWeb.war /usr/local/tomcat/webapps/ROOT.war
+# Instalar Tomcat manualmente de forma limpia
+RUN apt-get update && apt-get install -y wget && \
+    wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.80/bin/apache-tomcat-9.0.80.tar.gz && \
+    tar -xzvf apache-tomcat-9.0.80.tar.gz -C /opt/ && \
+    mv /opt/apache-tomcat-9.0.80 /opt/tomcat && \
+    rm apache-tomcat-9.0.80.tar.gz && \
+    rm -rf /opt/tomcat/webapps/*
+
+# Copiar tu archivo WAR directamente como ROOT
+COPY dist/BurgerGoWeb.war /opt/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]
