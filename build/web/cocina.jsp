@@ -18,22 +18,22 @@
     // Procesar cambio de estado si se envía la acción
     String accion = request.getParameter("accion");
     if ("cambiarEstado".equals(accion)) {
-        int idPedido = Integer.parseInt(request.getParameter("idPedido"));
-        String nuevoEstado = request.getParameter("nuevoEstado");
+    int idPedido = Integer.parseInt(request.getParameter("idPedido"));
+    String nuevoEstado = request.getParameter("nuevoEstado");
+    
+    boolean actualizado = pedidoDAO.actualizarEstado(idPedido, nuevoEstado);
+    if (actualizado) {
+        mensaje = "<div class='alert alert-success alert-dismissible fade show' role='alert'>¡El estado del pedido #" + idPedido + " fue actualizado a <strong>" + nuevoEstado + "</strong>!</div>";
         
-        boolean actualizado = pedidoDAO.actualizarEstado(idPedido, nuevoEstado);
-        if (actualizado) {
-            mensaje = "<div class='alert alert-success alert-dismissible fade show' role='alert'>¡El estado del pedido #" + idPedido + " fue actualizado a <strong>" + nuevoEstado + "</strong>!</div>";
-            
-            // AQUÍ ESTÁ EL CAMBIO: Si el cocinero pone el pedido en "En preparación", descontamos los insumos
-            if ("En preparación".equals(nuevoEstado)) {
-                pedidoDAO.descontarInsumosPorPedido(idPedido);
-            }
-            
-        } else {
-            mensaje = "<div class='alert alert-danger'>Error al actualizar el estado del pedido.</div>";
+        // Verificación flexible para evitar problemas con tildes
+        if (nuevoEstado != null && (nuevoEstado.toLowerCase().contains("preparación") || nuevoEstado.toLowerCase().contains("preparacion"))) {
+            pedidoDAO.descontarInsumosPorPedido(idPedido);
         }
+        
+    } else {
+        mensaje = "<div class='alert alert-danger'>Error al actualizar el estado del pedido.</div>";
     }
+}
     
     List<Pedido> listaPedidos = pedidoDAO.listarPedidos();
 %>
