@@ -24,6 +24,12 @@
         boolean actualizado = pedidoDAO.actualizarEstado(idPedido, nuevoEstado);
         if (actualizado) {
             mensaje = "<div class='alert alert-success alert-dismissible fade show' role='alert'>¡El estado del pedido #" + idPedido + " fue actualizado a <strong>" + nuevoEstado + "</strong>!</div>";
+            
+            // AQUÍ ESTÁ EL CAMBIO: Si el cocinero pone el pedido en "En preparación", descontamos los insumos
+            if ("En preparación".equals(nuevoEstado)) {
+                pedidoDAO.descontarInsumosPorPedido(idPedido);
+            }
+            
         } else {
             mensaje = "<div class='alert alert-danger'>Error al actualizar el estado del pedido.</div>";
         }

@@ -295,19 +295,22 @@ public class PedidoDAO {
     
     // Descuenta automáticamente los insumos al preparar un pedido
     public void descontarInsumosPorPedido(int idPedido) {
-        String sql = "UPDATE I " +
-                     "SET I.stock_actual = I.stock_actual - (PI.cantidad_requerida * DP.cantidad) " +
-                     "FROM INSUMO I " +
-                     "INNER JOIN PRODUCTO_INSUMO PI ON I.id = PI.id_insumo " +
-                     "INNER JOIN DETALLE_PEDIDO DP ON PI.id_producto = DP.id_producto " +
-                     "WHERE DP.id_pedido = ?";
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, idPedido);
-            ps.executeUpdate();
-        } catch (Exception e) {
-            System.out.println("Error al descontar insumos del inventario: " + e.getMessage());
-        }
+    String sql = "UPDATE insumo SET stock_actual = stock_actual - sub.total_usado " +
+                 "FROM (" +
+                 "    SELECT pi.id_insumo AS insumo_id, (pi.cantidad_requerida * dp.cantidad) AS total_usado " +
+                 "    FROM detalle_pedido dp " +
+                 "    JOIN producto_insumo pi ON dp.id_producto = pi.id_producto " +
+                 "    WHERE dp.id_pedido = ?" +
+                 ") sub " +
+                 "WHERE insumo.id = sub.insumo_id";
+                 
+    try (Connection con = Conexion.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, idPedido);
+        ps.executeUpdate();
+    } catch (Exception e) {
+        System.out.println("Error al descontar insumos del inventario: " + e.getMessage());
     }
+}
     
 }
