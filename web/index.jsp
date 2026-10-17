@@ -65,46 +65,78 @@
         <% } %>
 
         <div class="row">
-            <!-- SECCIÓN IZQUIERDA: MENÚ DE PRODUCTOS -->
+            <!-- SECCIÓN IZQUIERDA: MENÚ DE PRODUCTOS POR CATEGORÍAS -->
             <div class="col-lg-7">
-                <h3 class="fw-bold mb-3">Nuestras Hamburguesas y Combos</h3>
-                <div class="row row-cols-1 row-cols-md-2 g-3">
-                    <%
-                        if (listaProductos.isEmpty()) {
-                    %>
-                        <div class="col-12">
-                            <p class="text-muted">No hay productos disponibles por el momento.</p>
-                        </div>
-                    <%
-                        } else {
-                            for (Producto p : listaProductos) {
-                    %>
-                    <div class="col">
-                        <div class="card h-100 shadow-sm border-0">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title fw-bold text-dark"><%= p.getNombre() %></h5>
-                                <p class="card-text text-muted small flex-grow-1"><%= p.getDescripcion() %></p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <span class="fs-5 fw-bold text-success">S/ <%= String.format("%.2f", p.getPrecio()) %></span>
-                                    
-                                    <!-- Formulario para agregar al carrito -->
-                                    <form action="CarritoServlet" method="POST" class="d-flex align-items-center gap-1">
-                                        <input type="hidden" name="accion" value="agregar">
-                                        <input type="hidden" name="idProducto" value="<%= p.getId() %>">
-                                        <input type="number" name="cantidad" value="1" min="1" max="10" class="form-control form-control-sm text-center" style="width: 55px;">
-                                        <button type="submit" class="btn btn-dark btn-sm">🛒 Agregar</button>
-                                    </form>
+                <%
+                    String[] categorias = {"Hamburguesas", "Broaster", "Salchipapas", "Parrillas al Carbón", "Jugos y Bebidas"};
+
+                    if (listaProductos == null || listaProductos.isEmpty()) {
+                %>
+                    <h3 class="fw-bold mb-3">Menú</h3>
+                    <p class="text-muted">No hay productos disponibles por el momento.</p>
+                <%
+                    } else {
+                        for (String cat : categorias) {
+                %>
+                    <!-- Título de cada categoría -->
+                    <h3 class="fw-bold mt-4 mb-3 text-dark border-bottom pb-2"><%= cat %></h3>
+                    <div class="row row-cols-1 row-cols-md-2 g-3">
+                        <% 
+                            boolean hayProductos = false;
+                            for (Producto p : listaProductos) { 
+                                String nombreLower = p.getNombre().toLowerCase();
+                                String descLower = p.getDescripcion().toLowerCase();
+                                boolean pertenece = false;
+
+                                // Filtro por categoría según nombre o descripción
+                                if (cat.equals("Broaster") && (nombreLower.contains("ala") || nombreLower.contains("pierna") || nombreLower.contains("encuentro") || nombreLower.contains("pecho"))) {
+                                    pertenece = true;
+                                } else if (cat.equals("Salchipapas") && (nombreLower.contains("salchi") || descLower.contains("hotdog"))) {
+                                    pertenece = true;
+                                } else if (cat.equals("Parrillas al Carbón") && (nombreLower.contains("anticucho") || nombreLower.contains("parrilla"))) {
+                                    pertenece = true;
+                                } else if (cat.equals("Jugos y Bebidas") && (nombreLower.contains("jugo") || nombreLower.contains("gaseosa") || nombreLower.contains("cola"))) {
+                                    pertenece = true;
+                                } else if (cat.equals("Hamburguesas") && !nombreLower.contains("ala") && !nombreLower.contains("pierna") && !nombreLower.contains("encuentro") && !nombreLower.contains("pecho") && !nombreLower.contains("salchi") && !descLower.contains("hotdog") && !nombreLower.contains("anticucho") && !nombreLower.contains("parrilla") && !nombreLower.contains("jugo") && !nombreLower.contains("gaseosa")) {
+                                    pertenece = true;
+                                }
+
+                                if (pertenece) {
+                                    hayProductos = true;
+                        %>
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title fw-bold text-dark"><%= p.getNombre() %></h5>
+                                    <p class="card-text text-muted small flex-grow-1"><%= p.getDescripcion() %></p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <span class="fs-5 fw-bold text-success">S/ <%= String.format("%.2f", p.getPrecio()) %></span>
+
+                                        <!-- Formulario para agregar al carrito -->
+                                        <form action="CarritoServlet" method="POST" class="d-flex align-items-center gap-1">
+                                            <input type="hidden" name="accion" value="agregar">
+                                            <input type="hidden" name="idProducto" value="<%= p.getId() %>">
+                                            <input type="number" name="cantidad" value="1" min="1" max="10" class="form-control form-control-sm text-center" style="width: 55px;">
+                                            <button type="submit" class="btn btn-dark btn-sm">🛒 Agregar</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <% 
+                                } 
+                            } 
+                            if (!hayProductos) {
+                        %>
+                            <div class="col-12"><p class="text-muted small fst-italic">No hay productos en esta sección.</p></div>
+                        <%  } %>
                     </div>
-                    <% 
-                            }
-                        } 
-                    %>
-                </div>
+                <% 
+                        }
+                    } 
+                %>
             </div>
-
+            
             <!-- SECCIÓN DERECHA: CARRITO DE COMPRAS Y CHECKOUT -->
             <div class="col-lg-5 mt-4 mt-lg-0">
                 <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
