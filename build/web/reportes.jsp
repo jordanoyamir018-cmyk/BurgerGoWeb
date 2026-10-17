@@ -52,11 +52,15 @@
     %>
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="reportes.jsp">📊 BurgerGo - Reportes de Ventas</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="reportes.jsp">
+                <img src="img/logo_upn.png" alt="Logo UPN" height="100" class="d-inline-block me-2 rounded bg-white p-1">
+                <img src="img/logo_BurgerGo.jpeg" alt="Logo BurgerGo" height="110" class="d-inline-block me-2 rounded p-1"> 
+                📊 BurgerGo - Reportes de Ventas
+            </a>
             <div class="d-flex align-items-center">
                 <span class="text-white me-3 small">👤 Hola, <strong><%= userLog.getUsername() %></strong> (<%= userLog.getRol().toUpperCase() %>)</span>
 
-                <!-- Botón para ir a la gestión de Platos -->
+                <!-- Botones de navegación -->
                 <a href="admin.jsp" class="btn btn-outline-light btn-sm me-2">⚙️ Panel Admin (Platos)</a>
                 <a href="inventario.jsp" class="btn btn-outline-info btn-sm me-2">📦 Control de inventario</a>
 

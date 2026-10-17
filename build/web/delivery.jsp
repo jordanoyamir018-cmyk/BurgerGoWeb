@@ -50,7 +50,11 @@
     %>
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#">🛵 BurgerGo - Panel de Delivery y Reparto</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <img src="img/logo_upn.png" alt="Logo UPN" height="100" class="d-inline-block me-2 rounded bg-white p-1">
+                <img src="img/logo_BurgerGo.jpeg" alt="Logo BurgerGo" height="110" class="d-inline-block me-2 rounded p-1"> 
+                🛵 BurgerGo - Panel de Delivery y Reparto
+            </a>
             <div class="d-flex align-items-center">
                 <span class="text-white me-3 small">👤 Hola, <%= userLog.getUsername() %> (<%= userLog.getRol().toUpperCase() %>)</span>
 

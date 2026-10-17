@@ -16,8 +16,11 @@
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/DetallePedido.java</file>
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/controlador/CarritoServlet.java</file>
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Insumo.java</file>
-            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/InsumoDAO.java</file>
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/web/inventario.jsp</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/InsumoDAO.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Usuario.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/UsuarioDAO.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/controlador/LoginServlet.java</file>
         </group>
     </open-files>
 </project-private>
