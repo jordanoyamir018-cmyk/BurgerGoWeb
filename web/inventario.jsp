@@ -80,8 +80,8 @@
                                     <tr class="<%= alerta ? "table-danger" : "" %>">
                                         <td class="fw-bold"><%= ins.getNombre() %></td>
                                         <td><%= ins.getUnidadMedida() %></td>
-                                        <td class="text-center fs-6 fw-bold"><%= String.format("%.2f", ins.getStockActual()) %></td>
-                                        <td class="text-center text-muted"><%= String.format("%.2f", ins.getStockMinimo()) %></td>
+                                        <td class="text-center fs-6 fw-bold"><%= Math.round(ins.getStockActual()) %></td>
+                                        <td class="text-center text-muted"><%= Math.round(ins.getStockMinimo()) %></td>
                                         <td class="text-center">
                                             <% if (alerta) { %>
                                                 <span class="badge bg-danger text-white">⚠️ ¡ALERTA! STOCK BAJO</span>
