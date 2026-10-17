@@ -9,17 +9,19 @@ public class Producto {
     private String nombre;
     private String descripcion;
     private double precio;
+    private String imagen;
 
     // Constructor vacío
     public Producto() {
     }
 
     // Constructor con parámetros
-    public Producto(int id, String nombre, String descripcion, double precio) {
+    public Producto(int id, String nombre, String descripcion, double precio, String imagen) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
+        this.imagen = imagen;
     }
 
     // Getters y Setters
@@ -34,4 +36,11 @@ public class Producto {
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
+    
+    public String getImagen() {
+    return imagen;
+}
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 }

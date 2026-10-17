@@ -177,7 +177,20 @@
                                     hayProductos = true;
                         %>
                         <div class="col">
-                            <div class="card h-100 shadow-sm border-0">
+                            <div class="card h-100 shadow-sm border-0 overflow-hidden">
+                                
+                                <!-- IMAGEN DINÁMICA DEL PRODUCTO -->
+                                <% 
+                                    String imgPath = "img/default.png";
+                                    if (p.getImagen() != null && !p.getImagen().trim().isEmpty()) {
+                                        imgPath = "img/" + p.getImagen();
+                                    }
+                                %>
+                                <img src="<%= imgPath %>" 
+                                     class="card-img-top p-2" 
+                                     alt="<%= p.getNombre() %>" 
+                                     style="height: 160px; object-fit: contain; background-color: #ffffff;"> 
+
                                 <div class="card-body d-flex flex-column">
                                     <h5 class="card-title fw-bold text-dark"><%= p.getNombre() %></h5>
                                     <p class="card-text text-muted small flex-grow-1"><%= p.getDescripcion() %></p>

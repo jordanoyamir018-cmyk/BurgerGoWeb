@@ -27,6 +27,7 @@ public class ProductoDAO {
                 p.setNombre(rs.getString("nombre"));
                 p.setDescripcion(rs.getString("descripcion"));
                 p.setPrecio(rs.getDouble("precio"));
+                p.setImagen(rs.getString("imagen"));
                 lista.add(p);
             }
         } catch (Exception e) {
