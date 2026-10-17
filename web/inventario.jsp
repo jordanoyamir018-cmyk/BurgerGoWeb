@@ -168,22 +168,37 @@
     <!-- Script JavaScript para el comportamiento dinámico del selector de proveedores e insumos -->
     <script>
         const insumosPorProveedor = {
-            "1": [ // Distribuidora San Fernando (Carnes, embutidos y aves)
-                { id: "2", nombre: "Carne artesanal" },
-                { id: "5", nombre: "Lámina de pechuga frita" },
-                { id: "6", nombre: "Chorizo" },
-                { id: "4", nombre: "Tocino" }
+            "1": [
+                { id: 2, nombre: "Carne artesanal" },
+                { id: 4, nombre: "Tocino" },
+                { id: 5, nombre: "Lámina de pechuga frita" },
+                { id: 6, nombre: "Chorizo" },
+                { id: 12, nombre: "Pieza Pollo (Ala)" },
+                { id: 13, nombre: "Pieza Pollo (Pierna)" },
+                { id: 14, nombre: "Pieza Pollo (Encuentro)" },
+                { id: 15, nombre: "Pieza Pollo (Pecho)" },
+                { id: 16, nombre: "Hotdog" },
+                { id: 21, nombre: "Pollo a la Parrilla" }
             ],
-            "2": [ // Panadería El Buen Pan (Panes)
-                { id: "1", nombre: "Pan de Hamburguesa" }
+            "2": [
+                { id: 1, nombre: "Pan de Hamburguesa" }
             ],
-            "3": [ // Proveedor General / Mercado (Complementos, verduras, lácteos)
-                { id: "3", nombre: "Queso Cheddar" },
-                { id: "7", nombre: "Huevo" },
-                { id: "8", nombre: "Plátano" },
-                { id: "9", nombre: "Piña" },
-                { id: "10", nombre: "Papa (Porción)" },
-                { id: "11", nombre: "Ensalada (Porción)" }
+            "3": [
+                { id: 3, nombre: "Queso Cheddar" },
+                { id: 7, nombre: "Huevo" },
+                { id: 8, nombre: "Plátano" },
+                { id: 9, nombre: "Piña" },
+                { id: 10, nombre: "Papa (Porción)" },
+                { id: 11, nombre: "Ensalada (Porción)" },
+                { id: 17, nombre: "Palo de Anticucho" },
+                { id: 18, nombre: "Pancita" },
+                { id: 19, nombre: "Rachi" },
+                { id: 20, nombre: "Molleja" },
+                { id: 22, nombre: "Papaya" },
+                { id: 23, nombre: "Fresa" },
+                { id: 24, nombre: "Leche" },
+                { id: 25, nombre: "Gaseosa Inca Kola 1L" },
+                { id: 26, nombre: "Gaseosa Coca Cola 1L" }
             ]
         };
 
@@ -197,7 +212,7 @@
 
             if (proveedorId && insumosPorProveedor[proveedorId]) {
                 insumoSelect.disabled = false;
-                
+
                 const defaultOpt = document.createElement("option");
                 defaultOpt.value = "";
                 defaultOpt.textContent = "-- Seleccionar Insumo --";
