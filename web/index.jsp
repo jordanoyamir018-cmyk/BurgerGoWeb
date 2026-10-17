@@ -112,7 +112,20 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <% } %>
-        <% if (request.getParameter("error") != null) { %>
+
+        <!-- Error específico para el Login -->
+        <% if ("datosIncorrectos".equals(request.getParameter("error"))) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ❌ <strong>Error de acceso:</strong> Usuario o contraseña incorrectos. Por favor, verifícalos e inténtalo de nuevo.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } else if ("rolInvalido".equals(request.getParameter("error"))) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ⚠️ <strong>Error:</strong> El rol asignado a este usuario no es válido.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <% } else if (request.getParameter("error") != null) { %>
+            <!-- Error genérico para el carrito o compras -->
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 Hubo un error al procesar tu compra o el carrito estaba vacío.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
