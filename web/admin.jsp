@@ -21,16 +21,17 @@
             String nombre = request.getParameter("nombre");
             String descripcion = request.getParameter("descripcion");
             double precio = Double.parseDouble(request.getParameter("precio"));
+            String imagen = request.getParameter("imagen"); // Captura el archivo de imagen
             
             String idStr = request.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
                 // Crear
-                Producto p = new Producto(0, nombre, descripcion, precio);
+                Producto p = new Producto(0, nombre, descripcion, precio, imagen);
                 dao.insertar(p);
             } else {
                 // Actualizar
                 int id = Integer.parseInt(idStr);
-                Producto p = new Producto(id, nombre, descripcion, precio);
+                Producto p = new Producto(id, nombre, descripcion, precio, imagen);
                 dao.actualizar(p);
             }
             response.sendRedirect("admin.jsp");
@@ -109,6 +110,10 @@
                                 <label class="form-label">Precio (S/):</label>
                                 <input type="number" step="0.01" class="form-control" name="precio" value="<%= prodEdicion != null ? prodEdicion.getPrecio() : "" %>" required>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label">Nombre de archivo de imagen:</label>
+                                <input type="text" class="form-control" name="imagen" placeholder="ej: hamburguesa_royal.png" value="<%= (prodEdicion != null && prodEdicion.getImagen() != null) ? prodEdicion.getImagen() : "" %>">
+                            </div>
                             <button type="submit" class="btn btn-success w-100">Guardar</button>
                             <% if (prodEdicion != null) { %>
                                 <a href="admin.jsp" class="btn btn-secondary w-100 mt-2">Cancelar Edición</a>
@@ -130,6 +135,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Imagen</th>
                                         <th>Nombre</th>
                                         <th>Precio</th>
                                         <th>Acciones</th>
@@ -139,9 +145,13 @@
                                     <%
                                         List<Producto> lista = dao.listar();
                                         for (Producto p : lista) {
+                                            String imgFile = (p.getImagen() != null && !p.getImagen().trim().isEmpty()) ? p.getImagen() : "default.png";
                                     %>
                                     <tr>
                                         <td><%= p.getId() %></td>
+                                        <td>
+                                            <img src="img/<%= imgFile %>" alt="<%= p.getNombre() %>" style="width: 50px; height: 50px; object-fit: contain; background-color: #f8f9fa;" class="img-thumbnail">
+                                        </td>
                                         <td>
                                             <strong><%= p.getNombre() %></strong><br>
                                             <small class="text-muted"><%= p.getDescripcion() %></small>
