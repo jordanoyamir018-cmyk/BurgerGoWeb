@@ -112,7 +112,7 @@
                                 <label class="form-label small fw-bold">Seleccionar Insumo:</label>
                                 <select name="idInsumo" class="form-select form-select-sm" required>
                                     <% for (Insumo ins : listaInsumos) { %>
-                                        <option value="<%= ins.getId() %>"><%= ins.getNombre() %> (Actual: <%= ins.getStockActual() %>)</option>
+                                        <option value="<%= ins.getId() %>"><%= ins.getNombre() %> (Actual: <%= Math.round(ins.getStockActual()) %>)</option>
                                     <% } %>
                                 </select>
                             </div>
