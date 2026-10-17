@@ -202,6 +202,9 @@ public class PedidoDAO {
                 p.setFecha(rs.getTimestamp("fecha"));
                 p.setRepartidor(rs.getString("repartidor")); 
                 
+                // 👈 AQUÍ ASIGNAMOS LOS DETALLES AL PEDIDO
+                p.setDetalles(listarDetallesPorPedido(p.getId()));
+                
                 lista.add(p);
             }
         } catch (Exception e) {
@@ -229,6 +232,10 @@ public class PedidoDAO {
                     p.setEstado(rs.getString("estado"));
                     p.setFecha(rs.getTimestamp("fecha"));
                     p.setRepartidor(rs.getString("repartidor"));
+                    
+                    // 👈 AQUÍ TAMBIÉN ASIGNAMOS LOS DETALLES AL PEDIDO
+                    p.setDetalles(listarDetallesPorPedido(p.getId()));
+                    
                     lista.add(p);
                 }
             }

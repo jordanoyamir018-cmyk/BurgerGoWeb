@@ -7,6 +7,7 @@
 <%@page import="java.util.List" %>
 <%@page import="modelo.Pedido" %>
 <%@page import="dao.PedidoDAO" %>
+<%@ page import="modelo.DetallePedido" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     request.setCharacterEncoding("UTF-8");
@@ -71,6 +72,7 @@
                                 <th>N.° Pedido</th>
                                 <th>Cliente</th>
                                 <th>Teléfono / Dirección</th>
+                                <th>Detalles del Pedido</th>
                                 <th>Total</th>
                                 <th>Estado Actual</th>
                                 <th>Acciones de Cocina</th>
@@ -81,7 +83,7 @@
                                 if (listaPedidos.isEmpty()) {
                             %>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">No hay pedidos registrados todav&iacute;a.</td>
+                                    <td colspan="7" class="text-center text-muted py-4">No hay pedidos registrados todav&iacute;a.</td>
                                 </tr>
                             <%
                                 } else {
@@ -98,6 +100,21 @@
                                 <td>
                                     <small class="d-block text-muted">📞 <%= p.getTelefono() %></small>
                                     <small class="d-block text-muted">📍 <%= p.getDireccion() %></small>
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled mb-0 small">
+                                        <% 
+                                            if (p.getDetalles() != null && !p.getDetalles().isEmpty()) {
+                                                for (DetallePedido d : p.getDetalles()) {
+                                        %>
+                                                    <li>• <strong><%= d.getCantidad() %>x</strong> <%= d.getNombreProducto() %></li>
+                                        <% 
+                                                }
+                                            } else {
+                                        %>
+                                                <span class="text-muted fst-italic">Sin detalle</span>
+                                        <%  } %>
+                                    </ul>
                                 </td>
                                 <td class="fw-bold text-success">S/ <%= String.format("%.2f", p.getTotal()) %></td>
                                 <td>

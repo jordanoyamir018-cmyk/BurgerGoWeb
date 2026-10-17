@@ -5,6 +5,8 @@
 package modelo;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Pedido {
     private int id;
@@ -14,7 +16,10 @@ public class Pedido {
     private double total;
     private String estado;
     private Date fecha;
-    private String repartidor; // Atributo añadido para la gestión de delivery (Casos 8 y 9)
+    private String repartidor;
+    
+    // 👈 NUEVO ATRIBUTO PARA ALMACENAR LOS PLATOS/DETALLES DEL PEDIDO
+    private List<DetallePedido> detalles = new ArrayList<>();
 
     public Pedido() {}
 
@@ -23,7 +28,7 @@ public class Pedido {
         this.telefono = telefono;
         this.direccion = direccion;
         this.total = total;
-        this.estado = "Pendiente"; // Estado por defecto
+        this.estado = "Pendiente";
     }
 
     // Getters y Setters
@@ -89,5 +94,14 @@ public class Pedido {
 
     public void setRepartidor(String repartidor) {
         this.repartidor = repartidor;
+    }
+
+    // 👈 NUEVOS GETTER Y SETTER PARA LOS DETALLES
+    public List<DetallePedido> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetallePedido> detalles) {
+        this.detalles = detalles;
     }
 }
