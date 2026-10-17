@@ -58,14 +58,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark mb-4">
+    <%@ page import="modelo.Usuario" %>
+    <%
+        Usuario userLog = (Usuario) session.getAttribute("usuarioLogueado");
+        if (userLog == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+    %>
+    <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">🍔 BurgerGo - Panel Admin (CRUD)</a>
-            <div>
-                <a href="inventario.jsp" class="btn btn-outline-info btn-sm me-2">📦 Control de Inventario</a>
-                <a href="reportes.jsp" class="btn btn-outline-success btn-sm me-2">📊 Reporte de Ventas</a>
-                <a href="cocina.jsp" class="btn btn-outline-info btn-sm me-2">👨‍🍳 Panel de Cocina</a>
-                <a href="index.jsp" class="btn btn-outline-light btn-sm">Ver Menú Público</a>
+            <a class="navbar-brand fw-bold" href="admin.jsp">🍔 BurgerGo - Panel Admin</a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3 small">👤 Hola, <strong><%= userLog.getUsername() %></strong> (ADMIN)</span>
+
+                <a href="inventario.jsp" class="btn btn-outline-info btn-sm me-2">📦 Control de inventario</a>
+                <a href="reportes.jsp" class="btn btn-outline-warning btn-sm me-2">📊 Reportes de ventas</a>
+
+                <a href="LoginServlet?accion=logout" class="btn btn-outline-danger btn-sm">🚪 Salir</a>
             </div>
         </div>
     </nav>

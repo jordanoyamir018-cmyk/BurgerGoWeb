@@ -29,6 +29,7 @@
         totalCarrito += item.getSubtotal();
     }
 %>
+<%@ page import="modelo.Usuario" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,14 +42,68 @@
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="index.jsp">🍔 BurgerGo - Menú Principal</a>
-            <div>
-                <a href="cocina.jsp" class="btn btn-outline-info btn-sm me-2">👨‍🍳 Panel Cocina</a>
-                <a href="delivery.jsp" class="btn btn-outline-primary btn-sm me-2">🛵 Panel Delivery</a>
-                <a href="admin.jsp" class="btn btn-outline-warning btn-sm">Panel Admin</a>
+            <div class="d-flex align-items-center">
+                <% 
+                    Usuario userLog = (Usuario) session.getAttribute("usuarioLogueado");
+                    if (userLog != null) { 
+                %>
+                    <!-- Si ya inició sesión, mostramos acceso directo a su panel correspondiente y botón salir -->
+                    <span class="text-white me-3 small">👤 Hola, <strong><%= userLog.getUsername() %></strong> (<%= userLog.getRol().toUpperCase() %>)</span>
+                    
+                    <% if ("cocina".equals(userLog.getRol())) { %>
+                        <a href="cocina.jsp" class="btn btn-outline-info btn-sm me-2">👨‍🍳 Ir a Cocina</a>
+                    <% } else if ("delivery".equals(userLog.getRol())) { %>
+                        <a href="delivery.jsp" class="btn btn-outline-primary btn-sm me-2">🛵 Ir a Delivery</a>
+                    <% } else if ("admin".equals(userLog.getRol()) || "cajero".equals(userLog.getRol())) { %>
+                        <a href="admin.jsp" class="btn btn-outline-warning btn-sm me-2">⚙️ Panel Admin / CRUD</a>
+                    <% } %>
+
+                    <a href="LoginServlet?accion=logout" class="btn btn-outline-danger btn-sm">🚪 Salir</a>
+
+                <% } else { %>
+                    <!-- Si NO ha iniciado sesión, mostramos el botón para abrir el Modal de Login -->
+                    <button type="button" class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                        🔐 Iniciar Sesión (Personal)
+                    </button>
+                <% } %>
             </div>
         </div>
     </nav>
+            
+    <!-- VENTANA MODAL DE LOGIN -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title">🔑 Acceso al Sistema - BurgerGo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="LoginServlet" method="POST">
+                    <input type="hidden" name="accion" value="login">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Usuario:</label>
+                            <input type="text" class="form-control" name="username" required placeholder="Ej. chef, cajero1, jefe">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Contraseña:</label>
+                            <input type="password" class="form-control" name="password" required placeholder="••••">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Ingresar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
+    <!-- Script de Bootstrap (Necesario para que abra el Modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+            
     <div class="container mb-5">
         <!-- Alertas de éxito o error -->
         <% if (request.getParameter("exito") != null) { %>
@@ -182,7 +237,7 @@
                                 <span class="fs-4 fw-bold text-success">S/ <%= String.format("%.2f", totalCarrito) %></span>
                             </div>
 
-                            <!-- Formulario de Datos de Envío y Procesar Compra -->
+                            <!-- Formulario de Datos y Procesar Compra -->
                             <form action="CarritoServlet" method="POST">
                                 <input type="hidden" name="accion" value="procesarCompra">
                                 
@@ -190,22 +245,148 @@
                                     <label class="form-label small fw-bold">Nombre del Cliente:</label>
                                     <input type="text" class="form-control form-control-sm" name="clienteNombre" required placeholder="Ej. Juan Pérez">
                                 </div>
+
+                                <!-- NUEVA OPCIÓN: Local o Delivery -->
                                 <div class="mb-2">
-                                    <label class="form-label small fw-bold">Teléfono:</label>
-                                    <input type="text" class="form-control form-control-sm" name="telefono" required placeholder="Ej. 999888777">
+                                    <label class="form-label small fw-bold">Tipo de Pedido:</label>
+                                    <select class="form-select form-select-sm" name="tipoPedido" id="tipoPedido" required onchange="manejarTipoPedido()">
+                                        <option value="" selected disabled>-- Seleccione modalidad --</option>
+                                        <option value="Local">Local</option>
+                                        <option value="Delivery">Delivery</option>
+                                    </select>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold">Dirección de Entrega:</label>
-                                    <textarea class="form-control form-control-sm" name="direccion" rows="2" required placeholder="Av. Principal 123"></textarea>
+
+                                <!-- SECCIÓN CONDICIONAL PARA DELIVERY (Teléfono y Dirección) -->
+                                <div id="bloqueDelivery" style="display: none;">
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">Teléfono:</label>
+                                        <input type="text" class="form-control form-control-sm" name="telefono" id="inputTelefono" placeholder="Ej. 999888777">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small fw-bold">Dirección de Entrega:</label>
+                                        <textarea class="form-control form-control-sm" name="direccion" id="inputDireccion" rows="2" placeholder="Av. Principal 123"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN MÉTODO DE PAGO -->
+                                <div class="mb-2" id="bloqueMetodoPago" style="display: none;">
+                                    <label class="form-label small fw-bold">Método de Pago:</label>
+                                    <select class="form-select form-select-sm" name="metodoPago" id="selectMetodoPago" required onchange="manejarMetodoPago()">
+                                        <option value="" selected disabled>-- Seleccione pago --</option>
+                                    </select>
+                                </div>
+
+                                <!-- SUB-SECCIÓN YAPE (Común si eligen Yape) -->
+                                <div class="mb-2 p-2 bg-light border rounded small" id="bloqueYape" style="display: none;">
+                                    <p class="mb-1 text-primary fw-bold">📱 Pago por Yape</p>
+                                    <p class="mb-1 text-muted">Número a yapear: <strong class="text-dark">901977498</strong></p>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="yapeConfirmado" required>
+                                        <label class="form-check-label" for="yapeConfirmado">
+                                            Ya realicé el pago por Yape
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- SUB-SECCIÓN TARJETA BCP (Solo Delivery) -->
+                                <div class="mb-2 p-2 bg-light border rounded small" id="bloqueTarjeta" style="display: none;">
+                                    <p class="mb-1 text-danger fw-bold">💳 Pago con Tarjeta BCP</p>
+                                    <div class="mb-1">
+                                        <label class="form-label small">Nro. de Tarjeta BCP:</label>
+                                        <input type="text" class="form-control form-control-sm" name="nroTarjeta" id="inputTarjeta" placeholder="4152xxxxxxxxxxxx" maxlength="16">
+                                    </div>
+                                    <div>
+                                        <label class="form-label small">Contraseña:</label>
+                                        <input type="password" class="form-control form-control-sm" name="claveTarjeta" id="inputClave" placeholder="••••">
+                                    </div>
                                 </div>
                                 
-                                <button type="submit" class="btn btn-success w-100 fw-bold py-2">🚀 Confirmar y Enviar Pedido</button>
+                                <button type="submit" class="btn btn-success w-100 fw-bold py-2 mt-2" id="btnEnviar" style="display: none;">🚀 Confirmar y Enviar Pedido</button>
                             </form>
                         <% } %>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- SCRIPT DE CONTROL DINÁMICO -->
+        <script>
+        function manejarTipoPedido() {
+            const tipo = document.getElementById("tipoPedido").value;
+            const bloqueDelivery = document.getElementById("bloqueDelivery");
+            const bloqueMetodoPago = document.getElementById("bloqueMetodoPago");
+            const selectMetodo = document.getElementById("selectMetodoPago");
+            const bloqueYape = document.getElementById("bloqueYape");
+            const bloqueTarjeta = document.getElementById("bloqueTarjeta");
+            const btnEnviar = document.getElementById("btnEnviar");
+
+            // Resetear pagos y botones
+            selectMetodo.innerHTML = '<option value="" selected disabled>-- Seleccione pago --</option>';
+            bloqueYape.style.display = "none";
+            bloqueTarjeta.style.display = "none";
+            btnEnviar.style.display = "none";
+            bloqueMetodoPago.style.display = "block";
+
+            const inputTel = document.getElementById("inputTelefono");
+            const inputDir = document.getElementById("inputDireccion");
+
+            if (tipo === "Local") {
+                bloqueDelivery.style.display = "none";
+                inputTel.removeAttribute("required");
+                inputDir.removeAttribute("required");
+                inputTel.value = "";
+                inputDir.value = "";
+
+                // Opciones para Local: Yape o Efectivo
+                selectMetodo.innerHTML += `
+                    <option value="Yape">Yape</option>
+                    <option value="Efectivo">Efectivo</option>
+                `;
+            } else if (tipo === "Delivery") {
+                bloqueDelivery.style.display = "block";
+                inputTel.setAttribute("required", "true");
+                inputDir.setAttribute("required", "true");
+
+                // Opciones para Delivery: Yape o Tarjeta
+                selectMetodo.innerHTML += `
+                    <option value="Yape">Yape</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                `;
+            }
+        }
+
+        function manejarMetodoPago() {
+        const metodo = document.getElementById("selectMetodoPago").value;
+        const bloqueYape = document.getElementById("bloqueYape");
+        const bloqueTarjeta = document.getElementById("bloqueTarjeta");
+        const btnEnviar = document.getElementById("btnEnviar");
+
+        // Inputs específicos
+        const checkYape = document.getElementById("yapeConfirmado");
+        const inputTarjeta = document.getElementById("inputTarjeta");
+        const inputClave = document.getElementById("inputClave");
+
+        // Ocultar todo primero y limpiar requeridos
+        bloqueYape.style.display = "none";
+        bloqueTarjeta.style.display = "none";
+        checkYape.removeAttribute("required");
+        inputTarjeta.removeAttribute("required");
+        inputClave.removeAttribute("required");
+
+        btnEnviar.style.display = "block"; // Mostrar botón
+
+        if (metodo === "Yape") {
+            bloqueYape.style.display = "block";
+            checkYape.setAttribute("required", "true"); // Exigir confirmación de yape
+        } else if (metodo === "Tarjeta") {
+            bloqueTarjeta.style.display = "block";
+            inputTarjeta.setAttribute("required", "true"); // Exigir número de tarjeta
+            inputClave.setAttribute("required", "true");  // Exigir contraseña
+        } else if (metodo === "Efectivo") {
+            // No requiere campos adicionales
+        }
+    }
+        </script>
 
         <!-- SECCIÓN DE CONSULTA DE ESTADO Y DETALLE DE PEDIDOS -->
         <div class="row mt-5">

@@ -40,12 +40,34 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+    <%@ page import="modelo.Usuario" %>
+    <%
+        Usuario userLog = (Usuario) session.getAttribute("usuarioLogueado");
+        if (userLog == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+    %>
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="#">🛵 BurgerGo - Panel de Delivery y Reparto (Casos 8 y 9)</a>
-            <div>
-                <a href="cocina.jsp" class="btn btn-outline-light btn-sm me-2">👨‍🍳 Ir a Cocina</a>
-                <a href="index.jsp" class="btn btn-outline-warning btn-sm">Ver Menú Público</a>
+            <a class="navbar-brand fw-bold" href="#">🛵 BurgerGo - Panel de Delivery y Reparto</a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3 small">👤 Hola, <%= userLog.getUsername() %> (<%= userLog.getRol().toUpperCase() %>)</span>
+
+                <!-- Cambiar de área (Cierra sesión para pedir credenciales nuevas) -->
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        🔄 Cambiar de área
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item small" href="LoginServlet?accion=logout">🔐 Iniciar como Cocina</a></li>
+                        <li><a class="dropdown-item small" href="LoginServlet?accion=logout">🔐 Iniciar como Admin</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item small" href="LoginServlet?accion=logout">🍔 Ir al Menú Público</a></li>
+                    </ul>
+                </div>
+
+                <a href="LoginServlet?accion=logout" class="btn btn-outline-danger btn-sm">🚪 Salir</a>
             </div>
         </div>
     </nav>

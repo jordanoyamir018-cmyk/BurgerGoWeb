@@ -82,6 +82,7 @@ public class CarritoServlet extends HttpServlet {
             String telefono = request.getParameter("telefono");
             String direccion = request.getParameter("direccion");
             
+            
             double totalGeneral = 0;
             for (DetallePedido item : carrito) {
                 totalGeneral += item.getSubtotal();

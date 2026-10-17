@@ -34,17 +34,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
+    <%@ page import="modelo.Usuario" %>
+    <%
+        Usuario userLog = (Usuario) session.getAttribute("usuarioLogueado");
+        if (userLog == null) {
+            response.sendRedirect("index.jsp");
+            return;
+        }
+    %>
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="admin.jsp">📦 BurgerGo - Control de Inventario y Proveedores</a>
-            <div>
-                <a href="admin.jsp" class="btn btn-outline-warning btn-sm me-2">CRUD Productos</a>
-                <a href="reportes.jsp" class="btn btn-outline-success btn-sm me-2">Reporte Ventas</a>
-                <a href="index.jsp" class="btn btn-outline-light btn-sm">Ver Menú</a>
+            <a class="navbar-brand fw-bold" href="inventario.jsp">📦 BurgerGo - Control de Inventario</a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3 small">👤 Hola, <strong><%= userLog.getUsername() %></strong> (<%= userLog.getRol().toUpperCase() %>)</span>
+
+                <!-- Botón para ir a la gestión de Platos -->
+                <a href="admin.jsp" class="btn btn-outline-light btn-sm me-2">⚙️ Panel Admin (Platos)</a>
+                <a href="reportes.jsp" class="btn btn-outline-warning btn-sm me-2">📊 Reportes de ventas</a>
+
+                <a href="LoginServlet?accion=logout" class="btn btn-outline-danger btn-sm">🚪 Salir</a>
             </div>
         </div>
     </nav>
-
     <div class="container mb-5">
         <% if (request.getParameter("exito") != null) { %>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
