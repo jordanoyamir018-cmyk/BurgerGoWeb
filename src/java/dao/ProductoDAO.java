@@ -15,7 +15,7 @@ public class ProductoDAO {
     // Listar todos los productos (Read)
     public List<Producto> listar() {
         List<Producto> lista = new ArrayList<>();
-        String sql = "SELECT * FROM PRODUCTO";
+        String sql = "SELECT * FROM PRODUCTO ORDER BY id ASC";
         
         try (Connection con = Conexion.conectar();
              PreparedStatement ps = con.prepareStatement(sql);
@@ -28,6 +28,7 @@ public class ProductoDAO {
                 p.setDescripcion(rs.getString("descripcion"));
                 p.setPrecio(rs.getDouble("precio"));
                 p.setImagen(rs.getString("imagen"));
+                p.setCategoria(rs.getString("categoria"));
                 lista.add(p);
             }
         } catch (Exception e) {
@@ -38,19 +39,22 @@ public class ProductoDAO {
 
     // Insertar un nuevo producto (Create)
     public boolean insertar(Producto p) {
-        String sql = "INSERT INTO PRODUCTO (nombre, descripcion, precio) VALUES (?, ?, ?)";
-        try (Connection con = Conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setString(1, p.getNombre());
-            ps.setString(2, p.getDescripcion());
-            ps.setDouble(3, p.getPrecio());
-            ps.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            System.out.println("Error al insertar: " + e.getMessage());
-            return false;
-        }
+    String sql = "INSERT INTO PRODUCTO (nombre, descripcion, precio, imagen, categoria) VALUES (?, ?, ?, ?, ?)";
+    try (Connection con = Conexion.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, p.getNombre());
+        ps.setString(2, p.getDescripcion());
+        ps.setDouble(3, p.getPrecio());
+        ps.setString(4, p.getImagen());
+        ps.setString(5, p.getCategoria());
+        ps.executeUpdate();
+        return true;
+    } catch (Exception e) {
+        System.out.println("❌ ERROR CRÍTICO AL INSERTAR PRODUCTO: " + e.getMessage());
+        e.printStackTrace(); // Esto te mostrará el error exacto en la consola de NetBeans (GlassFish / Tomcat)
+        return false;
     }
+}
 
     // Buscar producto por ID (útil para la edición)
     public Producto buscarPorId(int id) {
@@ -66,6 +70,8 @@ public class ProductoDAO {
                     p.setNombre(rs.getString("nombre"));
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setPrecio(rs.getDouble("precio"));
+                    p.setImagen(rs.getString("imagen"));
+                    p.setCategoria(rs.getString("categoria"));
                 }
             }
         } catch (Exception e) {
@@ -76,13 +82,15 @@ public class ProductoDAO {
 
     // Actualizar un producto existente (Update)
     public boolean actualizar(Producto p) {
-        String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio = ? WHERE id = ?";
+        String sql = "UPDATE PRODUCTO SET nombre = ?, descripcion = ?, precio = ?, imagen = ?, categoria = ? WHERE id = ?";
         try (Connection con = Conexion.conectar();
              PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, p.getNombre());
             ps.setString(2, p.getDescripcion());
             ps.setDouble(3, p.getPrecio());
-            ps.setInt(4, p.getId());
+            ps.setString(4, p.getImagen());
+            ps.setString(5, p.getCategoria());
+            ps.setInt(6, p.getId());
             ps.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -90,7 +98,7 @@ public class ProductoDAO {
             return false;
         }
     }
-
+    
     // Eliminar un producto (Delete)
     public boolean eliminar(int id) {
         String sql = "DELETE FROM PRODUCTO WHERE id = ?";
@@ -119,6 +127,8 @@ public class ProductoDAO {
                     p.setNombre(rs.getString("nombre"));
                     p.setDescripcion(rs.getString("descripcion"));
                     p.setPrecio(rs.getDouble("precio"));
+                    p.setImagen(rs.getString("imagen"));
+                    p.setCategoria(rs.getString("categoria"));
                 }
             }
         } catch (Exception e) {
@@ -126,4 +136,36 @@ public class ProductoDAO {
         }
         return p;
     }
+    
+    public boolean hayStockSuficiente(int idProducto, int cantidadDeseada) {
+    // Nota: i.id coincide con el nombre de columna 'id' de la tabla insumo
+    String sql = "SELECT i.stock_actual, pi.cantidad_requerida "
+               + "FROM producto_insumo pi "
+               + "JOIN insumo i ON pi.id_insumo = i.id "
+               + "WHERE pi.id_producto = ?";
+    
+    boolean tieneReceta = false;
+
+    try (Connection con = Conexion.conectar();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, idProducto);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                tieneReceta = true;
+                double stockActual = rs.getDouble("stock_actual");
+                double cantidadRequerida = rs.getDouble("cantidad_requerida");
+
+                // Si el stock actual es menor a lo que necesita la receta
+                if (stockActual < (cantidadRequerida * cantidadDeseada)) {
+                    return false; // Retorna false -> Producto AGOTADO
+                }
+            }
+        }
+    } catch (Exception e) {
+        System.out.println("Error al verificar stock del producto ID " + idProducto + ": " + e.getMessage());
+    }
+
+    // Si no tiene insumos en la tabla de recetas, por defecto permite la venta (o cambia a false si exige receta)
+    return true; 
+}
 }

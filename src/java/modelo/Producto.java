@@ -10,18 +10,29 @@ public class Producto {
     private String descripcion;
     private double precio;
     private String imagen;
+    private String categoria;
 
     // Constructor vacío
     public Producto() {
     }
 
-    // Constructor con parámetros
+    // Constructor de 5 parámetros (por compatibilidad si se usa en otra parte)
     public Producto(int id, String nombre, String descripcion, double precio, String imagen) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagen = imagen;
+    }
+
+    // Constructor de 6 parámetros (incluye la categoría)
+    public Producto(int id, String nombre, String descripcion, double precio, String imagen, String categoria) {
+        this.id = id;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.imagen = imagen;
+        this.categoria = categoria;
     }
 
     // Getters y Setters
@@ -37,10 +48,9 @@ public class Producto {
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
     
-    public String getImagen() {
-    return imagen;
-}
-    public void setImagen(String imagen) {
-        this.imagen = imagen;
-    }
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }

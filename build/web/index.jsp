@@ -37,6 +37,35 @@
     <title>BurgerGo - Menú y Carrito de Compras</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    :root {
+        --burger-red: #E63946;
+        --burger-dark: #212529;
+        --burger-yellow: #F4A261;
+    }
+
+    /* Personalizar la barra de navegación con estilo UPN/BurgerGo */
+    .navbar {
+        background-color: var(--burger-dark) !important;
+        border-bottom: 3px solid var(--burger-red);
+    }
+
+    /* Botones de acción principales (Agregar / Guardar) */
+    .btn-primary, .btn-success {
+        background-color: var(--burger-red) !important;
+        border-color: var(--burger-red) !important;
+    }
+    
+    .btn-primary:hover, .btn-success:hover {
+        background-color: #d02e3b !important;
+        border-color: #c52a36 !important;
+    }
+
+    /* Precios destacados con el tono cálido o rojo */
+    .text-success {
+        color: var(--burger-red) !important;
+    }
+</style>
 <body class="bg-light">
     <!-- Barra de Navegación -->
     <nav class="navbar navbar-dark bg-dark mb-4 shadow-sm">
@@ -139,8 +168,20 @@
         <div class="row">
             <!-- SECCIÓN IZQUIERDA: MENÚ DE PRODUCTOS POR CATEGORÍAS -->
             <div class="col-lg-7">
+                <%-- Alerta de producto o insumo agotado --%>
                 <%
-                    String[] categorias = {"Hamburguesas", "Broaster", "Salchipapas", "Parrillas al Carbón", "Jugos y Bebidas"};
+                    String errorStock = request.getParameter("error");
+                    if ("agotado".equals(errorStock)) {
+                %>
+                    <div class="alert alert-danger alert-dismissible fade show mb-3 shadow-sm" role="alert">
+                        <strong>⚠️ Producto Agotado:</strong> No hay insumos suficientes en el inventario para preparar este plato.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <% } %>
+
+                <%
+                    String[] categorias = {"Hamburguesas", "Broaster", "Salchipapas", "Parrillas al Carbon", "Jugos y Bebidas"};
+                    ProductoDAO prodDAO = new ProductoDAO();
 
                     if (listaProductos == null || listaProductos.isEmpty()) {
                 %>
@@ -156,29 +197,46 @@
                         <% 
                             boolean hayProductos = false;
                             for (Producto p : listaProductos) { 
-                                String nombreLower = p.getNombre().toLowerCase();
-                                String descLower = p.getDescripcion().toLowerCase();
                                 boolean pertenece = false;
 
-                                // Filtro por categoría según nombre o descripción
-                                if (cat.equals("Broaster") && (nombreLower.contains("ala") || nombreLower.contains("pierna") || nombreLower.contains("encuentro") || nombreLower.contains("pecho"))) {
-                                    pertenece = true;
-                                } else if (cat.equals("Salchipapas") && (nombreLower.contains("salchi") || descLower.contains("hotdog"))) {
-                                    pertenece = true;
-                                } else if (cat.equals("Parrillas al Carbón") && (nombreLower.contains("anticucho") || nombreLower.contains("parrilla"))) {
-                                    pertenece = true;
-                                } else if (cat.equals("Jugos y Bebidas") && (nombreLower.contains("jugo") || nombreLower.contains("gaseosa") || nombreLower.contains("cola"))) {
-                                    pertenece = true;
-                                } else if (cat.equals("Hamburguesas") && !nombreLower.contains("ala") && !nombreLower.contains("pierna") && !nombreLower.contains("encuentro") && !nombreLower.contains("pecho") && !nombreLower.contains("salchi") && !descLower.contains("hotdog") && !nombreLower.contains("anticucho") && !nombreLower.contains("parrilla") && !nombreLower.contains("jugo") && !nombreLower.contains("gaseosa")) {
-                                    pertenece = true;
+                                String catProducto = (p.getCategoria() != null) ? p.getCategoria().trim().toLowerCase() : "";
+                                String catActual = cat.trim().toLowerCase(); // La categoría del arreglo (ej: "parrillas al carbon")
+
+                                // Comparación flexible quitando tildes comunes o diferencias exactas
+                                if (!catProducto.isEmpty()) {
+                                    if (catActual.equals(catProducto) || 
+                                        (catActual.contains("carbon") && catProducto.contains("carbon")) ||
+                                        (catActual.contains("salchi") && catProducto.contains("salchi")) ||
+                                        (catActual.contains("broaster") && catProducto.contains("broaster")) ||
+                                        (catActual.contains("jugo") && catProducto.contains("jugo")) ||
+                                        (catActual.contains("hamburguesa") && catProducto.contains("hamburguesa"))) {
+                                        pertenece = true;
+                                    }
+                                } 
+                                // Fallback por si algún producto estuviera sin categoría en la BD
+                                else {
+                                    String nombreLower = (p.getNombre() != null) ? p.getNombre().toLowerCase() : "";
+                                    if (cat.equals("Broaster") && (nombreLower.contains("ala") || nombreLower.contains("pierna") || nombreLower.contains("encuentro") || nombreLower.contains("pecho"))) {
+                                        pertenece = true;
+                                    } else if (cat.equals("Salchipapas") && nombreLower.contains("salchi")) {
+                                        pertenece = true;
+                                    } else if (cat.equals("Parrillas al Carbon") && (nombreLower.contains("anticucho") || nombreLower.contains("parrilla"))) {
+                                        pertenece = true;
+                                    } else if (cat.equals("Jugos y Bebidas") && (nombreLower.contains("jugo") || nombreLower.contains("gaseosa"))) {
+                                        pertenece = true;
+                                    } else if (cat.equals("Hamburguesas") && !nombreLower.contains("ala") && !nombreLower.contains("pierna") && !nombreLower.contains("salchi") && !nombreLower.contains("anticucho") && !nombreLower.contains("jugo")) {
+                                        pertenece = true;
+                                    }
                                 }
 
                                 if (pertenece) {
                                     hayProductos = true;
+                                    // Evaluación de disponibilidad en el inventario de insumos
+                                    boolean tieneStock = prodDAO.hayStockSuficiente(p.getId(), 1);
                         %>
                         <div class="col">
                             <div class="card h-100 shadow-sm border-0 overflow-hidden">
-                                
+
                                 <!-- IMAGEN DINÁMICA DEL PRODUCTO -->
                                 <% 
                                     String imgPath = "img/default.png";
@@ -192,18 +250,30 @@
                                      style="height: 160px; object-fit: contain; background-color: #ffffff;"> 
 
                                 <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title fw-bold text-dark"><%= p.getNombre() %></h5>
+                                    <h5 class="card-title fw-bold text-dark d-flex align-items-center justify-content-between">
+                                        <span><%= p.getNombre() %></span>
+                                        <% if (!tieneStock) { %>
+                                            <span class="badge bg-danger" style="font-size: 0.65rem;">AGOTADO</span>
+                                        <% } %>
+                                    </h5>
                                     <p class="card-text text-muted small flex-grow-1"><%= p.getDescripcion() %></p>
                                     <div class="d-flex justify-content-between align-items-center mt-3">
                                         <span class="fs-5 fw-bold text-success">S/ <%= String.format("%.2f", p.getPrecio()) %></span>
 
-                                        <!-- Formulario para agregar al carrito -->
-                                        <form action="CarritoServlet" method="POST" class="d-flex align-items-center gap-1">
-                                            <input type="hidden" name="accion" value="agregar">
-                                            <input type="hidden" name="idProducto" value="<%= p.getId() %>">
-                                            <input type="number" name="cantidad" value="1" min="1" max="10" class="form-control form-control-sm text-center" style="width: 55px;">
-                                            <button type="submit" class="btn btn-dark btn-sm">🛒 Agregar</button>
-                                        </form>
+                                        <% if (tieneStock) { %>
+                                            <!-- Formulario habilitado para agregar al carrito -->
+                                            <form action="CarritoServlet" method="POST" class="d-flex align-items-center gap-1">
+                                                <input type="hidden" name="accion" value="agregar">
+                                                <input type="hidden" name="idProducto" value="<%= p.getId() %>">
+                                                <input type="number" name="cantidad" value="1" min="1" max="10" class="form-control form-control-sm text-center" style="width: 55px;">
+                                                <button type="submit" class="btn btn-dark btn-sm">🛒 Agregar</button>
+                                            </form>
+                                        <% } else { %>
+                                            <!-- Botón deshabilitado si no hay stock de insumos -->
+                                            <button class="btn btn-secondary btn-sm" disabled style="opacity: 0.65; cursor: not-allowed;">
+                                                🚫 Agotado
+                                            </button>
+                                        <% } %>
                                     </div>
                                 </div>
                             </div>
@@ -221,7 +291,7 @@
                     } 
                 %>
             </div>
-            
+
             <!-- SECCIÓN DERECHA: CARRITO DE COMPRAS Y CHECKOUT -->
             <div class="col-lg-5 mt-4 mt-lg-0">
                 <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">

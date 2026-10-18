@@ -41,6 +41,35 @@
     <title>BurgerGo - Reporte de Ventas (Caso 12)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+    :root {
+        --burger-red: #E63946;
+        --burger-dark: #212529;
+        --burger-yellow: #F4A261;
+    }
+
+    /* Personalizar la barra de navegación con estilo UPN/BurgerGo */
+    .navbar {
+        background-color: var(--burger-dark) !important;
+        border-bottom: 3px solid var(--burger-red);
+    }
+
+    /* Botones de acción principales (Agregar / Guardar) */
+    .btn-primary, .btn-success {
+        background-color: var(--burger-red) !important;
+        border-color: var(--burger-red) !important;
+    }
+    
+    .btn-primary:hover, .btn-success:hover {
+        background-color: #d02e3b !important;
+        border-color: #c52a36 !important;
+    }
+
+    /* Precios destacados con el tono cálido o rojo */
+    .text-success {
+        color: var(--burger-red) !important;
+    }
+</style>
 <body class="bg-light">
     <%@ page import="modelo.Usuario" %>
     <%

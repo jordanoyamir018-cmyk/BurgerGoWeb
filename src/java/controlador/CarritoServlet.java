@@ -5,6 +5,7 @@
 
 package controlador;
 
+
 import dao.PedidoDAO;
 import dao.ProductoDAO;
 import modelo.DetallePedido;
@@ -39,11 +40,27 @@ public class CarritoServlet extends HttpServlet {
             carrito = new ArrayList<>();
         }
         
+        ProductoDAO prodDao = new ProductoDAO();
+        
         if ("agregar".equals(accion)) {
             int idProducto = Integer.parseInt(request.getParameter("idProducto"));
             int cantidad = Integer.parseInt(request.getParameter("cantidad"));
             
-            ProductoDAO prodDao = new ProductoDAO();
+            // Calcular la cantidad total que habría en el carrito si agregamos esta nueva cantidad
+            int cantidadTotalSolicitada = cantidad;
+            for (DetallePedido item : carrito) {
+                if (item.getIdProducto() == idProducto) {
+                    cantidadTotalSolicitada += item.getCantidad();
+                    break;
+                }
+            }
+            
+            // Validar existencia de insumos en el inventario
+            if (!prodDao.hayStockSuficiente(idProducto, cantidadTotalSolicitada)) {
+                response.sendRedirect("index.jsp?error=agotado&idProd=" + idProducto);
+                return;
+            }
+            
             Producto p = prodDao.obtenerPorId(idProducto);
             
             if (p != null) {
@@ -78,10 +95,17 @@ public class CarritoServlet extends HttpServlet {
                 return;
             }
             
+            // Validación final de stock de todo el carrito antes de procesar el pedido
+            for (DetallePedido item : carrito) {
+                if (!prodDao.hayStockSuficiente(item.getIdProducto(), item.getCantidad())) {
+                    response.sendRedirect("index.jsp?error=agotado&idProd=" + item.getIdProducto());
+                    return;
+                }
+            }
+            
             String cliente = request.getParameter("clienteNombre");
             String telefono = request.getParameter("telefono");
             String direccion = request.getParameter("direccion");
-            
             
             double totalGeneral = 0;
             for (DetallePedido item : carrito) {
