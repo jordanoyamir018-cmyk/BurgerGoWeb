@@ -10,6 +10,5 @@ RUN apt-get update && apt-get install -y wget && \
 
 COPY dist/BurgerGoWeb.war /opt/tomcat/webapps/ROOT.war
 
-EXPOSE 8080
-
-CMD ["/opt/tomcat/bin/catalina.sh", "run"]
+# Modificar server.xml al iniciar el contenedor para que Tomcat escuche en el puerto que le asigna Render ($PORT)
+CMD sh -c "sed -i 's/port=\"8080\"/port=\"'\"${PORT:-8080}\"'\"/g' /opt/tomcat/conf/server.xml && /opt/tomcat/bin/catalina.sh run"
