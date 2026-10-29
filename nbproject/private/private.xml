@@ -21,6 +21,8 @@
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/modelo/Usuario.java</file>
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/dao/UsuarioDAO.java</file>
             <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/controlador/LoginServlet.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/controlador/ProductoServlet.java</file>
+            <file>file:/C:/Users/ACER/Desktop/BurgerGoWeb/src/java/conexion/TestConexion.java</file>
         </group>
     </open-files>
 </project-private>

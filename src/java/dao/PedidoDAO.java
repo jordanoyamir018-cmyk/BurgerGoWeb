@@ -132,7 +132,7 @@ public class PedidoDAO {
     // Método transaccional para registrar un Pedido con sus Detalles múltiples
     // Método transaccional adaptado a tu estructura exacta de base de datos
     public boolean registrarPedidoConDetalle(Pedido pedido, List<DetallePedido> detalles) {
-        String sqlPedido = "INSERT INTO PEDIDO (cliente_nombre, telefono, direccion, total, estado, fecha) VALUES (?, ?, ?, ?, 'Pendiente', NOW())";
+        String sqlPedido = "INSERT INTO PEDIDO (cliente_nombre, telefono, direccion, total, estado, fecha) VALUES (?, ?, ?, ?, 'Pendiente', GETDATE())";
         String sqlDetalle = "INSERT INTO DETALLE_PEDIDO (id_pedido, id_producto, cantidad, subtotal) VALUES (?, ?, ?, ?)";
         
         try (Connection con = Conexion.conectar()) {
